@@ -59,6 +59,9 @@ We have added a `render.yaml` file to the root of your project. Render will use 
 6. You will see a list of environment variables to configure:
    * `DATABASE_URL`: Paste the PostgreSQL connection string you copied from Neon in Step 1.
    * `FRONTEND_URL`: Put `*` for now (we will update this with your actual Vercel URL later).
+   * `ENABLE_AUTO_SEEDING`: Set to `true` if you want to seed mock data on initial startup (default is `false` in production for safety).
+   * `SEED_ADMIN_EMAIL`: Set your custom admin email (defaults to `admin@hirehub.ai`).
+   * `SEED_ADMIN_PASSWORD`: Set a secure custom admin password (defaults to `Password123!`).
    * Note: `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` will be **automatically generated** for you securely!
 7. Click **Apply**. Render will start building and deploying the backend.
 8. Once deployment is complete, Render will provide a service URL (e.g., `https://hirehub-ai-backend.onrender.com`). Copy this URL.
@@ -83,6 +86,9 @@ If you prefer not to use Blueprints, you can configure the service manually on R
    * `JWT_ACCESS_SECRET`: (Generate a long random string, e.g., `openssl rand -hex 32`)
    * `JWT_REFRESH_SECRET`: (Generate a different long random string)
    * `FRONTEND_URL`: `*` (We'll update this once the frontend is deployed)
+   * `ENABLE_AUTO_SEEDING`: `false` (Set to `true` to enable auto-seeding on initial deployment)
+   * `SEED_ADMIN_EMAIL`: (Your custom admin email address)
+   * `SEED_ADMIN_PASSWORD`: (Your secure custom admin password)
 5. Click **Create Web Service**.
 
 ---
@@ -126,11 +132,17 @@ https://your-backend-name.onrender.com/api/health
 ```
 You should receive a JSON response showing the status as `"online"`.
 
-### 2. Auto-Seeding Database
-The backend has an **auto-seed mechanism** built-in! On the first successful startup, if the database is empty, it will automatically populate 20+ mock jobs, users, companies, and applications. You can immediately log in with:
-* **Admin Login**: `admin@hirehub.ai` / `Password123!`
-* **Recruiter Login**: `recruiter@techcorp.com` / `Password123!`
-* **Job Seeker Login**: `alex.developer@gmail.com` / `Password123!`
+### 2. Auto-Seeding Database & Production Security
+The backend has an **auto-seed mechanism** built-in! On the first successful startup, if the database is empty and `ENABLE_AUTO_SEEDING=true` is set, it will automatically populate mock jobs, users, companies, and applications.
+
+> [!IMPORTANT]
+> To prevent data loss and unauthorized login credentials in production:
+> * **Seeding is DISABLED by default in production** (i.e. when `NODE_ENV=production` unless `ENABLE_AUTO_SEEDING=true`).
+> * If you enable seeding, you **MUST** specify your own custom credentials via `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` on Render.
+> * If you use the defaults, the login credentials will be:
+>   * **Admin Login**: `admin@hirehub.ai` / `Password123!` (Warning: Highly Insecure!)
+>   * **Recruiter Login**: `recruiter@techcorp.com` / `Password123!`
+>   * **Job Seeker Login**: `alex.developer@gmail.com` / `Password123!`
 
 ### 3. Check for CORS Block Errors
 If you open your web app and cannot log in or fetch jobs, open your browser's Developer Tools Console (F12) to inspect the network.

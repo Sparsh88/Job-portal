@@ -30,15 +30,13 @@ The project follows a scalable client-server architecture with separate frontend
 
 **Live Website**
 
-https://your-project.vercel.app
+https://job-portal-six-psi-20.vercel.app/
 
 ### ⚡ Backend API (Render)
 
 **API Base URL**
 
-https://your-backend.onrender.com/api
-
-> Replace the above URLs with your deployed Vercel and Render links.
+https://job-portal-pp7n.onrender.com/api
 
 ---
 
@@ -230,6 +228,11 @@ JWT_SECRET=your_jwt_secret
 PORT=5000
 
 FRONTEND_URL=http://localhost:5173
+
+# Seeding & Security Settings (Recommended for Production)
+ENABLE_AUTO_SEEDING=false           # Set to true only on first deploy to seed mock data
+SEED_ADMIN_EMAIL=your_admin_email   # Custom Admin email (default: admin@hirehub.ai)
+SEED_ADMIN_PASSWORD=your_secure_pwd # Custom Admin password (default: Password123!)
 ```
 
 ---

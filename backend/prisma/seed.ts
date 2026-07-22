@@ -1,5 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const Role = {
   JOB_SEEKER: 'JOB_SEEKER' as const,
@@ -54,12 +57,19 @@ async function main() {
   await prisma.profile.deleteMany({});
   await prisma.user.deleteMany({});
 
-  const passwordHash = await bcrypt.hash('Password123!', 10);
+  const adminEmail = process.env.SEED_ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'admin@hirehub.ai';
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'Password123!';
+  
+  if (process.env.NODE_ENV === 'production' && adminPassword === 'Password123!') {
+    console.warn('⚠️ WARNING: Seeding admin with default password "Password123!" in production is highly insecure. Please set SEED_ADMIN_PASSWORD in environment variables.');
+  }
+
+  const passwordHash = await bcrypt.hash(adminPassword, 10);
 
   // 1. Create Admin User
   await prisma.user.create({
     data: {
-      email: 'admin@hirehub.ai',
+      email: adminEmail,
       name: 'System Admin',
       passwordHash,
       role: Role.ADMIN,

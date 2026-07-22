@@ -3,6 +3,12 @@ import bcrypt from 'bcryptjs';
 
 export async function seedDatabaseIfEmpty() {
   try {
+    // Under no circumstances should we auto-seed in production unless explicitly enabled
+    if (process.env.NODE_ENV === 'production' && process.env.ENABLE_AUTO_SEEDING !== 'true') {
+      console.log('ℹ️ Auto-seeding is disabled in production. Set ENABLE_AUTO_SEEDING=true to enable.');
+      return;
+    }
+
     const jobCount = await prisma.job.count();
     // If jobs are 20 or more, DB is up to date
     if (jobCount >= 20) {
@@ -23,12 +29,20 @@ export async function seedDatabaseIfEmpty() {
     await prisma.profile.deleteMany({});
     await prisma.user.deleteMany({});
 
-    const passwordHash = await bcrypt.hash('Password123!', 10);
+    const adminEmail = process.env.SEED_ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'admin@hirehub.ai';
+    const adminPassword = process.env.SEED_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'Password123!';
+    
+    // Safety check: print a warning if using default credentials in production
+    if (process.env.NODE_ENV === 'production' && adminPassword === 'Password123!') {
+      console.warn('⚠️ WARNING: Seeding admin with default password "Password123!" in production is highly insecure. Please set SEED_ADMIN_PASSWORD in environment variables.');
+    }
+
+    const passwordHash = await bcrypt.hash(adminPassword, 10);
 
     // 1. Admin User
     await prisma.user.create({
       data: {
-        email: 'admin@hirehub.ai',
+        email: adminEmail,
         name: 'System Admin',
         passwordHash,
         role: 'ADMIN',
