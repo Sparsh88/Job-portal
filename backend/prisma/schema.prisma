@@ -1,0 +1,235 @@
+// HireHub-AI Neon PostgreSQL Schema with Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  JOB_SEEKER
+  RECRUITER
+  ADMIN
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  REMOTE
+}
+
+enum ExperienceLevel {
+  ENTRY
+  MID
+  SENIOR
+  LEAD
+  EXECUTIVE
+}
+
+enum ApplicationStatus {
+  APPLIED
+  IN_REVIEW
+  SHORTLISTED
+  INTERVIEW_SCHEDULED
+  REJECTED
+  ACCEPTED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum InterviewStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(JOB_SEEKER)
+  avatarUrl    String?
+  isVerified   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relationships
+  profile       Profile?
+  company       Company?
+  jobsPosted    Job[]          @relation("RecruiterJobs")
+  applications  Application[]  @relation("ApplicantApplications")
+  interviews    Interview[]    @relation("CandidateInterviews")
+  interviewsLed Interview[]    @relation("RecruiterInterviews")
+  payments      Payment[]
+  notifications Notification[]
+  savedJobs     SavedJob[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Profile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio             String?
+  title           String?
+  phone           String?
+  location        String?
+  skills          String[]
+  experienceYears Int      @default(0)
+  resumeUrl       String?
+  resumeName      String?
+  githubUrl       String?
+  linkedinUrl     String?
+  portfolioUrl    String?
+  targetRole      String?
+  expectedSalary  Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Company {
+  id          String   @id @default(uuid())
+  name        String
+  logoUrl     String?
+  website     String?
+  description String
+  industry    String
+  location    String
+  companySize String   @default("10-50 employees")
+  recruiterId String   @unique
+  recruiter   User     @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+  jobs        Job[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([recruiterId])
+}
+
+model Job {
+  id              String          @id @default(uuid())
+  title           String
+  description     String
+  category        String
+  location        String
+  jobType         JobType         @default(FULL_TIME)
+  experienceLevel ExperienceLevel @default(MID)
+  salaryMin       Int
+  salaryMax       Int
+  isFeatured      Boolean         @default(false)
+  isActive        Boolean         @default(true)
+  skillsRequired  String[]
+  recruiterId     String
+  recruiter       User            @relation("RecruiterJobs", fields: [recruiterId], references: [id], onDelete: Cascade)
+  companyId       String
+  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  applications    Application[]
+  savedJobs       SavedJob[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([category])
+  @@index([location])
+  @@index([recruiterId])
+  @@index([companyId])
+  @@index([isActive])
+}
+
+model Application {
+  id                String            @id @default(uuid())
+  jobId             String
+  job               Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicantId       String
+  applicant         User              @relation("ApplicantApplications", fields: [applicantId], references: [id], onDelete: Cascade)
+  resumeUrl         String?
+  coverLetter       String?
+  status            ApplicationStatus @default(APPLIED)
+  matchScore        Float             @default(75.0)
+  recruiterFeedback String?
+  interviews        Interview[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@unique([jobId, applicantId])
+  @@index([applicantId])
+  @@index([jobId])
+  @@index([status])
+}
+
+model Interview {
+  id            String          @id @default(uuid())
+  applicationId String
+  application   Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  recruiterId   String
+  recruiter     User            @relation("RecruiterInterviews", fields: [recruiterId], references: [id], onDelete: Cascade)
+  candidateId   String
+  candidate     User            @relation("CandidateInterviews", fields: [candidateId], references: [id], onDelete: Cascade)
+  scheduledAt   DateTime
+  durationMins  Int             @default(45)
+  meetingLink   String?
+  format        String          @default("Video Call")
+  status        InterviewStatus @default(SCHEDULED)
+  notes         String?
+  feedback      String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([recruiterId])
+  @@index([candidateId])
+  @@index([applicationId])
+}
+
+model Payment {
+  id               String        @id @default(uuid())
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  razorpayOrderId  String        @unique
+  razorpayPaymentId String?
+  amount           Int           // in smallest currency unit (e.g. INR paise)
+  currency         String        @default("INR")
+  planType         String        // e.g. "RECRUITER_PRO", "JOB_BOOST"
+  status           PaymentStatus @default(PENDING)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  type      String   @default("INFO") // INFO, APPLICATION, INTERVIEW, PAYMENT
+  link      String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model SavedJob {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, jobId])
+  @@index([userId])
+}
