@@ -7,6 +7,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../utils/AppError';
 import { calculateSkillMatch } from '../services/aiService';
 import { verifyAccessToken } from '../utils/jwt';
+import { memoryCache } from '../services/cacheService';
 
 export const getAllJobs = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   const {
@@ -17,13 +18,44 @@ export const getAllJobs = asyncHandler(async (req: AuthenticatedRequest, res: Re
     experienceLevel,
     minSalary,
     featured,
+    includeDescription,
     page = '1',
     limit = '10',
   } = req.query;
 
-  const pageNum = parseInt(page as string);
-  const limitNum = parseInt(limit as string);
+  const pageNum = Math.max(1, parseInt(page as string) || 1);
+  const limitNum = Math.min(50, Math.max(1, parseInt(limit as string) || 10));
   const skip = (pageNum - 1) * limitNum;
+
+  // Extract auth token if provided for AI match scoring
+  let candidateSkills: string[] = [];
+  let candidateUserId: string | null = null;
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    try {
+      const token = req.headers.authorization.split(' ')[1];
+      const decoded = verifyAccessToken(token);
+      candidateUserId = decoded.userId;
+      const profile = await prisma.profile.findUnique({
+        where: { userId: decoded.userId },
+        select: { skills: true },
+      });
+      if (profile && profile.skills) {
+        candidateSkills = profile.skills;
+      }
+    } catch (e) {
+      // ignore token parse error for open job search
+    }
+  }
+
+  // Generate cache key based on query parameters & candidate state
+  const cacheKey = `jobs:list:${JSON.stringify(req.query)}:${candidateUserId || 'anon'}`;
+  const cachedData = memoryCache.get<any>(cacheKey);
+
+  if (cachedData) {
+    res.setHeader('X-Cache', 'HIT');
+    res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
+    return res.status(200).json(cachedData);
+  }
 
   const whereClause: any = { isActive: true };
 
@@ -59,11 +91,26 @@ export const getAllJobs = asyncHandler(async (req: AuthenticatedRequest, res: Re
     whereClause.isFeatured = true;
   }
 
+  // Optimized selective field projection for list endpoints (avoids fetching heavy description)
+  const shouldIncludeDesc = includeDescription === 'true';
+
   const [total, jobs] = await Promise.all([
     prisma.job.count({ where: whereClause }),
     prisma.job.findMany({
       where: whereClause,
-      include: {
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        location: true,
+        jobType: true,
+        experienceLevel: true,
+        salaryMin: true,
+        salaryMax: true,
+        isFeatured: true,
+        skillsRequired: true,
+        createdAt: true,
+        description: shouldIncludeDesc ? true : false,
         company: {
           select: {
             id: true,
@@ -83,21 +130,6 @@ export const getAllJobs = asyncHandler(async (req: AuthenticatedRequest, res: Re
     }),
   ]);
 
-  // If candidate token provided, calculate AI score for each job
-  let candidateSkills: string[] = [];
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      const token = req.headers.authorization.split(' ')[1];
-      const decoded = verifyAccessToken(token);
-      const profile = await prisma.profile.findUnique({ where: { userId: decoded.userId } });
-      if (profile && profile.skills) {
-        candidateSkills = profile.skills;
-      }
-    } catch (e) {
-      // ignore token parse error for open job search
-    }
-  }
-
   const jobsWithAIScore = jobs.map((job: any) => {
     const aiScoreResult = calculateSkillMatch(candidateSkills, job.skillsRequired);
     return {
@@ -106,7 +138,7 @@ export const getAllJobs = asyncHandler(async (req: AuthenticatedRequest, res: Re
     };
   });
 
-  res.status(200).json({
+  const responsePayload = {
     success: true,
     data: {
       jobs: jobsWithAIScore,
@@ -117,11 +149,27 @@ export const getAllJobs = asyncHandler(async (req: AuthenticatedRequest, res: Re
         totalPages: Math.ceil(total / limitNum),
       },
     },
-  });
+  };
+
+  // Cache response in memory for 60 seconds
+  memoryCache.set(cacheKey, responsePayload, 60 * 1000);
+
+  res.setHeader('X-Cache', 'MISS');
+  res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
+  res.status(200).json(responsePayload);
 });
 
 export const getJobById = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
+  const cacheKey = `jobs:detail:${id}`;
+  const cachedJob = memoryCache.get<any>(cacheKey);
+
+  if (cachedJob) {
+    res.setHeader('X-Cache', 'HIT');
+    res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
+    return res.status(200).json(cachedJob);
+  }
+
   const job = await prisma.job.findUnique({
     where: { id },
     include: {
@@ -144,10 +192,16 @@ export const getJobById = asyncHandler(async (req: AuthenticatedRequest, res: Re
     throw new AppError('Job posting not found.', 404);
   }
 
-  res.status(200).json({
+  const responsePayload = {
     success: true,
     data: job,
-  });
+  };
+
+  memoryCache.set(cacheKey, responsePayload, 60 * 1000);
+
+  res.setHeader('X-Cache', 'MISS');
+  res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
+  res.status(200).json(responsePayload);
 });
 
 export const createJob = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
@@ -193,6 +247,9 @@ export const createJob = asyncHandler(async (req: AuthenticatedRequest, res: Res
     },
   });
 
+  // Invalidate job list cache upon creation
+  memoryCache.invalidateJobsCache();
+
   res.status(201).json({
     success: true,
     message: 'Job posting created successfully.',
@@ -223,6 +280,9 @@ export const updateJob = asyncHandler(async (req: AuthenticatedRequest, res: Res
     },
   });
 
+  // Invalidate jobs cache upon update
+  memoryCache.invalidateJobsCache();
+
   res.status(200).json({
     success: true,
     message: 'Job updated successfully.',
@@ -246,6 +306,9 @@ export const deleteJob = asyncHandler(async (req: AuthenticatedRequest, res: Res
 
   await prisma.job.delete({ where: { id } });
 
+  // Invalidate jobs cache upon deletion
+  memoryCache.invalidateJobsCache();
+
   res.status(200).json({
     success: true,
     message: 'Job deleted successfully.',
@@ -257,8 +320,8 @@ export const calculateAIMatchScore = asyncHandler(async (req: AuthenticatedReque
   const userId = req.user?.userId;
 
   const [job, profile] = await Promise.all([
-    prisma.job.findUnique({ where: { id } }),
-    prisma.profile.findUnique({ where: { userId } }),
+    prisma.job.findUnique({ where: { id }, select: { skillsRequired: true } }),
+    prisma.profile.findUnique({ where: { userId }, select: { skills: true } }),
   ]);
 
   if (!job) {

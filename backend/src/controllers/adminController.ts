@@ -11,17 +11,20 @@ export const getAdminMetrics = asyncHandler(async (req: AuthenticatedRequest, re
     recruiterCount,
     totalJobs,
     totalApplications,
-    completedPayments,
+    paymentsAggregate,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { role: 'JOB_SEEKER' } }),
     prisma.user.count({ where: { role: 'RECRUITER' } }),
     prisma.job.count(),
     prisma.application.count(),
-    prisma.payment.findMany({ where: { status: 'COMPLETED' } }),
+    prisma.payment.aggregate({
+      _sum: { amount: true },
+      where: { status: 'COMPLETED' },
+    }),
   ]);
 
-  const totalRevenueINR = completedPayments.reduce((acc: number, p: any) => acc + p.amount / 100, 0);
+  const totalRevenueINR = (paymentsAggregate._sum.amount || 0) / 100;
 
   res.status(200).json({
     success: true,

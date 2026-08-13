@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Job } from '../types';
 import { api } from '../services/api';
 import { JobCard } from '../components/JobCard';
+import { JobCardSkeleton } from '../components/JobCardSkeleton';
 import { AnimatedCounter } from '../components/AnimatedCounter';
 import {
   Search,
@@ -246,7 +247,7 @@ export const Home: React.FC = () => {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div key={n} className="h-64 rounded-2xl bg-slate-100 dark:bg-zinc-900/50 animate-pulse border border-slate-200 dark:border-zinc-800" />
+              <JobCardSkeleton key={n} />
             ))}
           </div>
         ) : (

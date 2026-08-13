@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Job } from '../types';
 import { api } from '../services/api';
 import { JobCard } from '../components/JobCard';
+import { JobCardSkeleton } from '../components/JobCardSkeleton';
 import { Modal } from '../components/Modal';
 import { Search, MapPin, Filter, Briefcase, SlidersHorizontal, ShieldCheck, Cloud, Database, Cpu, Code } from 'lucide-react';
 
@@ -207,7 +208,7 @@ export const Jobs: React.FC = () => {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((n) => (
-            <div key={n} className="h-64 rounded-2xl bg-slate-100 dark:bg-slate-900/50 animate-pulse border border-slate-200 dark:border-slate-800" />
+            <JobCardSkeleton key={n} />
           ))}
         </div>
       ) : jobs.length === 0 ? (

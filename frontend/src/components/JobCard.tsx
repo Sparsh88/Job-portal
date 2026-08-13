@@ -32,7 +32,15 @@ export const JobCard: React.FC<JobCardProps> = ({ job, onQuickApply }) => {
               'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=80'
             }
             alt={job.company?.name || 'Company Logo'}
-            className="w-12 h-12 rounded-xl object-cover border border-slate-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 group-hover:scale-110 group-hover:rotate-2 transition-transform duration-300 shadow-md"
+            width={48}
+            height={48}
+            loading="lazy"
+            decoding="async"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src =
+                'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=80';
+            }}
+            className="w-12 h-12 rounded-xl object-cover border border-slate-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 group-hover:scale-110 group-hover:rotate-2 transition-transform duration-300 shadow-md shrink-0"
           />
           <div className="flex-1 min-w-0">
             <h3 className="font-extrabold text-lg text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">

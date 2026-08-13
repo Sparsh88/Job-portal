@@ -144,6 +144,10 @@ model Job {
   @@index([recruiterId])
   @@index([companyId])
   @@index([isActive])
+  @@index([isActive, isFeatured, createdAt(sort: Desc)])
+  @@index([category, isActive])
+  @@index([jobType, isActive])
+  @@index([createdAt(sort: Desc)])
 }
 
 model Application {
