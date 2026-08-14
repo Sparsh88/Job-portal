@@ -222,7 +222,3 @@ npm run dev
 - LinkedIn: [sparshchauhan08](https://linkedin.com/in/sparshchauhan08)
 
 ---
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
