@@ -5,6 +5,7 @@ services:
     rootDir: backend
     buildCommand: npm install --production=false && npm run build && npx prisma db push
     startCommand: npm run start
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
