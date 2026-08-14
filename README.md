@@ -1,383 +1,228 @@
-# 💼 HireHub AI - AI-Powered Job & Career Platform
+# HireHub AI
 
-<p align="center">
-  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" />
-  <img src="https://img.shields.io/badge/TypeScript-5.3-3178C6?logo=typescript&logoColor=white" />
-  <img src="https://img.shields.io/badge/Node.js-Express-000000?logo=express" />
-  <img src="https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma" />
-  <img src="https://img.shields.io/badge/PostgreSQL-Neon-4169E1?logo=postgresql" />
-  <img src="https://img.shields.io/badge/TailwindCSS-3-06B6D4?logo=tailwindcss" />
-  <img src="https://img.shields.io/badge/JWT-Authentication-green" />
-</p>
-
-<p align="center">
-An AI-powered full-stack job portal that connects candidates and recruiters through intelligent skill matching, interview preparation, and streamlined recruitment workflows.
-</p>
+> A full-stack AI-assisted job portal and hiring management platform featuring role-based workflows, automated skill-match scoring, and technical mock interview evaluations.
 
 ---
 
-# 📖 Overview
+## 🌐 Live Demo & Repository
 
-HireHub AI is a full-stack job portal built using modern web technologies. It provides separate dashboards for candidates and recruiters, allowing users to search jobs, manage applications, conduct AI-assisted interview practice, and track recruitment progress.
-
-The project follows a scalable client-server architecture with separate frontend and backend folders for easy deployment on **Vercel** and **Render**, while using **Neon PostgreSQL** as the cloud database.
-
----
-
-# 🚀 Live Demo
-
-### 🌐 Frontend (Vercel)
-
-**Live Website**
-
-https://job-portal-six-psi-20.vercel.app/
-
-### ⚡ Backend API (Render)
-
-**API Base URL**
-
-https://job-portal-pp7n.onrender.com/api
+- **Frontend Application (Vercel):** [https://job-portal-six-psi-20.vercel.app/](https://job-portal-six-psi-20.vercel.app/)
+- **Backend REST API (Render):** [https://job-portal-pp7n.onrender.com/api](https://job-portal-pp7n.onrender.com/api)
+- **GitHub Repository:** [https://github.com/Sparsh88/Job-portal](https://github.com/Sparsh88/Job-portal)
 
 ---
 
-# ✨ Features
+## 📖 Overview
 
-## 👨‍💻 Candidate Features
+**HireHub AI** is a production-oriented web application designed to bridge the gap between candidates and hiring managers. It streamlines the recruitment lifecycle by providing tailored interfaces for job seekers, recruiters, and platform administrators.
 
-- User Registration & Login
-- Secure JWT Authentication
-- Browse Engineering Jobs
-- Search Jobs by Title
-- Filter Jobs by Domain
-- Apply for Jobs
-- Application Status Tracking
-- Candidate Dashboard
-- Profile Management
+Job seekers can explore curated engineering and tech roles, calculate skill alignment against job requirements, practice with category-specific technical mock interview questions, and track application progress in real time. Recruiters can post vacancies, evaluate applicant profiles, update recruitment stages, and schedule structured interviews.
+
+The project is architected as a decoupled client-server system, utilizing a TypeScript/React frontend powered by Vite and Tailwind CSS, coupled with an Express and Prisma ORM backend connected to a serverless Neon PostgreSQL database.
 
 ---
 
-## 🤖 AI Features
+## 🎯 Problem Statement
 
-- AI Skill Match Score
-- Missing Skill Analysis
-- AI Technical Mock Interview
-- Automated Interview Feedback
-- Resume & Skill Evaluation
-
----
-
-## 🏢 Recruiter Features
-
-- Recruiter Dashboard
-- Post New Jobs
-- Edit Existing Jobs
-- Delete Job Listings
-- View Applicants
-- Manage Application Status
-- Schedule Interviews
+Traditional job boards and hiring workflows suffer from several recurring friction points:
+- **Skill Mismatch & Lack of Feedback:** Candidates often apply to listings without knowing how well their skillset matches specific job requirements or which gaps to address.
+- **Fragmented Interview Preparation:** Job seekers lack integrated tools to test their domain knowledge against specific role categories before facing real interviews.
+- **Recruiter Overhead:** Hiring teams face cluttered applicant tracking and struggle to filter candidates and manage hiring stages efficiently.
+- **Disconnected Candidate Tracking:** Job applicants frequently face opaque application processes without clear status updates on review, shortlisting, or interview scheduling.
 
 ---
 
-## 🎨 UI/UX Features
+## ✨ Key Features
 
-- Fully Responsive Design
-- Dark / Light Theme
-- Glassmorphism UI
-- Smooth Animations
-- Loading Skeletons
-- Modern Dashboard Layout
-- Mobile Friendly Interface
+### 👨‍💻 Candidate Features
+- **Job Discovery & Multi-Filter Search:** Filter job postings by category, location, job type (Full-Time, Remote, Internship, Contract), and experience level with debounced search queries.
+- **AI Skill Match Scorer:** Compares candidate skills against job requirements to calculate compatibility percentages, list missing skills, and provide actionable resume enhancement suggestions.
+- **Interactive Mock Interview:** Practice domain-specific technical interview questions with instant feedback and score evaluations.
+- **Application Tracking Dashboard:** Real-time visibility into applied jobs, current status (Applied, In Review, Shortlisted, Interview Scheduled, Accepted, Rejected), and interview invites.
+- **Saved Jobs & Profile Management:** Bookmark job listings for later and manage profiles with target roles, experience years, skills, and portfolio links.
 
----
+### 🏢 Recruiter & Admin Features
+- **Job Lifecycle Management:** Create, edit, feature, activate/deactivate, and delete detailed job listings with custom skill requirements and salary ranges.
+- **Applicant Review Pipeline:** Review applicant profiles, resumes, cover letters, and calculated match scores; transition applicant stages with feedback notes.
+- **Interview Scheduling:** Organize video/in-person interviews with meeting links, scheduled timestamps, and post-interview notes.
+- **Administrative Overview:** System-wide metrics tracking total users, active listings, submitted applications, and platform activity.
 
-# 🛠 Tech Stack
-
-## Frontend
-
-- React 19
-- TypeScript
-- Vite
-- Tailwind CSS
-- React Router
-- Axios
-- Context API
+### 🛡️ Core Infrastructure & UX
+- **Secure Authentication & RBAC:** Access control via JWT access/refresh token pairs, bcrypt password hashing, and role-based middleware (`JOB_SEEKER`, `RECRUITER`, `ADMIN`).
+- **In-Memory Caching & Performance:** Client-side Axios cache deduplication and backend memory caching for high-traffic job searches.
+- **Responsive Dark/Light Mode UI:** Fully responsive interface built with Tailwind CSS, Lucide icons, and theme persistence.
 
 ---
 
-## Backend
+## 🛠️ Tech Stack
 
-- Node.js
-- Express.js
-- TypeScript
-- Prisma ORM
-- JWT Authentication
-- REST API
-
----
-
-## Database
-
-- Neon PostgreSQL
+| Layer | Technology | Usage in Project |
+|---|---|---|
+| **Frontend** | React 18, TypeScript, Vite | Single-page application, typed UI components, fast build tooling |
+| **Styling & UI** | Tailwind CSS, Lucide Icons | Responsive layout, dark/light theme styling, modern icon set |
+| **State & Routing** | Context API, React Router v6 | Global auth and theme state management, client-side protected routing |
+| **HTTP Client** | Axios | REST communication, JWT interceptors, auto token refresh, in-memory caching |
+| **Backend Runtime** | Node.js, Express.js, TypeScript | Typed REST API architecture, routing, error handling, and middleware |
+| **Database & ORM** | PostgreSQL (Neon), Prisma ORM | Relational data modeling, migrations, indexing, and type-safe queries |
+| **Security & Auth** | JWT, bcryptjs, Helmet, CORS | Token-based stateless authentication, password hashing, and HTTP headers |
+| **Deployment** | Vercel (Frontend), Render (Backend) | Cloud continuous deployment for client and containerized API service |
 
 ---
 
-## Deployment
-
-- Vercel (Frontend)
-- Render (Backend)
-
----
-
-# 📂 Project Structure
+## 🏗️ Architecture
 
 ```text
-HireHub-AI
-│
-├── frontend
-│   ├── public
-│   ├── src
-│   │   ├── assets
-│   │   ├── components
-│   │   ├── context
-│   │   ├── hooks
-│   │   ├── layouts
-│   │   ├── pages
-│   │   ├── services
-│   │   ├── types
-│   │   ├── utils
-│   │   ├── App.tsx
-│   │   └── main.tsx
-│   └── package.json
-│
-├── backend
-│   ├── prisma
-│   │   ├── schema.prisma
-│   │   └── seed.ts
-│   ├── src
-│   │   ├── config
-│   │   ├── controllers
-│   │   ├── middleware
-│   │   ├── routes
-│   │   ├── services
-│   │   ├── utils
-│   │   ├── app.ts
-│   │   └── server.ts
-│   └── package.json
-│
-├── README.md
-└── .gitignore
+┌────────────────────────────────────────────────────────┐
+│                   Client (Browser)                     │
+│    React 18 + TypeScript + Vite + Tailwind CSS         │
+│    (State: Context API | Network: Axios with Cache)    │
+└──────────────────────────┬─────────────────────────────┘
+                           │ HTTPS / REST API
+                           ▼
+┌────────────────────────────────────────────────────────┐
+│               Backend (Node.js / Express)              │
+│    ├── Middleware: JWT Auth, RBAC, Helmet, CORS        │
+│    ├── Controllers: Auth, Jobs, Apps, Interviews, etc. │
+│    └── Services: AI Skill Matcher, Caching, Token Auth │
+└──────────────────────────┬─────────────────────────────┘
+                           │ Prisma ORM
+                           ▼
+┌────────────────────────────────────────────────────────┐
+│            Database: Neon PostgreSQL Cloud             │
+│   (Users, Profiles, Companies, Jobs, Applications,     │
+│    Interviews, SavedJobs, Notifications, Payments)     │
+└────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-# 🔑 Key Modules
+## 🔄 Application Flow
 
-### Authentication
-
-- JWT Authentication
-- Protected Routes
-- Role-Based Access
-
-### Job Management
-
-- Create Jobs
-- Update Jobs
-- Delete Jobs
-- Search Jobs
-- Filter Jobs
-
-### Applications
-
-- Apply to Jobs
-- Track Status
-- Recruiter Review
-- Interview Scheduling
-
-### AI
-
-- Skill Matching
-- Interview Simulation
-- Feedback Generation
+1. **Authentication:** User registers or logs in; backend validates credentials with bcrypt, generates JWT access/refresh tokens, and returns user role data.
+2. **Profile & Job Discovery:** Job seekers update their skill profiles and browse active jobs with multi-parameter filtering and cached query results.
+3. **Skill Match Scoring:** When viewing a role, the built-in skill matching engine analyzes overlapping keywords and missing competencies to display a readiness score and improvement tips.
+4. **Application Submission:** Candidate submits an application with resume URL and cover letter, linking candidate data directly to the recruiter's posting.
+5. **Recruiter Review:** Recruiters access their dedicated dashboard to inspect applicants, filter candidates by match scores, and update candidate progress.
+6. **Interview Scheduling & Practice:** Recruiters schedule interviews with meeting links, while candidates practice with the AI technical mock interview module.
 
 ---
 
-# 🗄 Database
+## 📁 Project Structure
 
-The application uses **Neon PostgreSQL** with **Prisma ORM**.
-
-Main models include:
-
-- Users
-- Recruiters
-- Jobs
-- Applications
-- Interviews
-- Skills
+```text
+Job-portal/
+├── backend/
+│   ├── prisma/
+│   │   ├── schema.prisma          # Database schema and relational models
+│   │   └── seed.ts                # Database seeder script with mock data
+│   ├── src/
+│   │   ├── config/                # Database and environment configurations
+│   │   ├── controllers/           # Route handler controllers (Auth, Jobs, etc.)
+│   │   ├── middlewares/           # Auth verification, RBAC, error handling
+│   │   ├── routes/                # Express API route declarations
+│   │   ├── services/              # AI skill matching, cache, tokens
+│   │   ├── types/                 # TypeScript interfaces and request definitions
+│   │   ├── app.ts                 # Express application setup
+│   │   └── server.ts              # Server bootstrap and database connection
+│   ├── package.json
+│   └── tsconfig.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/            # Reusable UI components (Navbar, Footer, Modals)
+│   │   ├── context/               # AuthContext and ThemeContext providers
+│   │   ├── pages/                 # Home, Jobs, JobDetails, Dashboards, AI Scorer
+│   │   ├── services/              # Axios instance, interceptors, and caching
+│   │   ├── types/                 # Frontend interfaces and data models
+│   │   ├── App.tsx                # App routing with protected role gates
+│   │   └── main.tsx               # Entry point
+│   ├── package.json
+│   ├── tailwind.config.js
+│   └── vite.config.ts
+├── DEPLOYMENT_GUIDE.md
+├── render.yaml                    # Render blueprint deployment specification
+└── README.md
+```
 
 ---
 
-# ⚙ Environment Variables
+## ⚙️ Environment Variables
 
-## Backend (.env)
-
+### Backend (`backend/.env`)
 ```env
-DATABASE_URL=your_neon_database_url
-
-JWT_SECRET=your_jwt_secret
-
 PORT=5000
-
-FRONTEND_URL=http://localhost:5173
-
-# Seeding & Security Settings (Recommended for Production)
-ENABLE_AUTO_SEEDING=false           # Set to true only on first deploy to seed mock data
-SEED_ADMIN_EMAIL=your_admin_email   # Custom Admin email (default: admin@hirehub.ai)
-SEED_ADMIN_PASSWORD=your_secure_pwd # Custom Admin password (default: Password123!)
+NODE_ENV=development
+DATABASE_URL="postgresql://<user>:<password>@<host>/<dbname>?sslmode=require"
+JWT_ACCESS_SECRET="your_jwt_access_secret_key"
+JWT_REFRESH_SECRET="your_jwt_refresh_secret_key"
+FRONTEND_URL="http://localhost:5173"
 ```
 
----
-
-## Frontend (.env)
-
+### Frontend (`frontend/.env`)
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL="http://localhost:5000/api"
 ```
 
 ---
 
-# 💻 Local Setup
+## 🚀 Local Setup & Installation
 
-## Clone Repository
+### Prerequisites
+- Node.js (v18+ recommended)
+- PostgreSQL database instance or Neon connection string
+- npm or yarn
 
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/HireHub-AI.git
-
-cd HireHub-AI
+git clone https://github.com/Sparsh88/Job-portal.git
+cd Job-portal
 ```
 
----
-
-## Backend
-
+### 2. Backend Setup
 ```bash
 cd backend
-
 npm install
-
 npx prisma generate
-
-npx prisma migrate dev
-
+npx prisma db push
 npm run dev
 ```
+> The backend server runs at `http://localhost:5000`.
 
----
-
-## Frontend
-
+### 3. Frontend Setup
 ```bash
-cd frontend
-
+cd ../frontend
 npm install
-
 npm run dev
 ```
+> The frontend development server runs at `http://localhost:5173`.
 
 ---
 
-# 🚀 Deployment
+## 📡 Key API Endpoints
 
-## Frontend
-
-Deploy the **frontend** folder to **Vercel**
-
-Framework:
-
-```
-Vite
-```
-
-Build Command
-
-```
-npm run build
-```
-
-Output Directory
-
-```
-dist
-```
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/auth/register` | Public | Register a new job seeker or recruiter |
+| `POST` | `/api/auth/login` | Public | Authenticate user and receive JWT tokens |
+| `GET` | `/api/auth/me` | Authenticated | Retrieve authenticated user profile |
+| `GET` | `/api/jobs` | Public | Search and filter active job postings |
+| `GET` | `/api/jobs/:id` | Public / Auth | Get job details and automated skill compatibility |
+| `POST` | `/api/jobs` | Recruiter / Admin | Create a new job listing |
+| `POST` | `/api/applications` | Job Seeker | Submit job application |
+| `GET` | `/api/applications/my-applications` | Job Seeker | View candidate application history |
+| `PATCH` | `/api/applications/:id/status` | Recruiter / Admin | Update application recruitment status |
+| `POST` | `/api/interviews` | Recruiter / Admin | Schedule an interview for an applicant |
+| `GET` | `/api/admin/stats` | Admin | Get administrative dashboard platform metrics |
 
 ---
 
-## Backend
-
-Deploy the **backend** folder to **Render**
-
-Build Command
-
-```
-npm install && npm run build
-```
-
-Start Command
-
-```
-npm start
-```
-
----
-
-# 📸 Screenshots
-
-Add screenshots of:
-
-- Home Page
-- Job Listing
-- Job Details
-- Candidate Dashboard
-- Recruiter Dashboard
-- AI Skill Matcher
-- AI Mock Interview
-- Dark Mode
-
----
-
-# 🎯 Future Improvements
-
-- Resume Parsing
-- AI Resume Builder
-- Video Interview Integration
-- Email Notifications
-- Real-time Chat
-- Company Verification
-- Saved Jobs
-- Job Recommendations
-- Analytics Dashboard
-
----
-
-# 👨‍💻 Author
+## 👨‍💻 Author
 
 **Sparsh Chauhan**
-
-Full Stack Web Developer
-
-LinkedIn: https://linkedin.com/in/sparshchauhan08
-
-GitHub: https://github.com/Sparsh88
+- GitHub: [@Sparsh88](https://github.com/Sparsh88)
+- LinkedIn: [sparshchauhan08](https://linkedin.com/in/sparshchauhan08)
 
 ---
 
-# ⭐ Support
+## 📄 License
 
-If you found this project helpful, consider giving it a ⭐ on GitHub.
-
-It helps others discover the project and motivates further development.
-
----
-
-# 📄 License
-
-This project is licensed under the **MIT License**.
+This project is licensed under the [MIT License](LICENSE).
