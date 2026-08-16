@@ -21,9 +21,8 @@ For testing the different platform portals and features:
 | **Recruiter (Primary)** | **Recruiter** | `recruiter@techcorp.com` | `Password123!` | Post & manage job postings, review candidate resumes, inspect AI match scores, and schedule candidate interviews. |
 | **Recruiter (Secondary)** | **Recruiter** | `hiring@innovatelabs.ai` | `Password123!` | Create & edit engineering listings, review applicants, and manage recruitment pipeline. |
 | **Candidate / Job Seeker** | **Candidate** | `alex.developer@gmail.com` | `Password123!` | Search & filter jobs, run AI resume match tests, track applications, and practice mock technical interviews. |
-| **Admin** | **Admin** | `sparshchauhan050@gmail.com` | `Sp@080806` | Full platform administrative governance, system metrics, user management, and moderation queue. |
 
-> **Role Isolation & Security:** The platform enforces strict role isolation across all login portals. Recruiter credentials cannot log in via Candidate or Admin tabs; Candidate accounts cannot access Recruiter or Admin dashboards; and Admin accounts are restricted exclusively to the Admin Command Center.
+> **Role Isolation & Security:** The platform enforces strict role isolation across all login portals. Recruiter credentials cannot log in via Candidate or Admin tabs; Candidate accounts cannot access Recruiter or Admin dashboards; and Admin access is restricted strictly to authorized platform administrators.
 
 ---
 
