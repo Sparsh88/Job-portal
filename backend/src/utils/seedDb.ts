@@ -1,6 +1,65 @@
 import { prisma } from '../config/db';
 import bcrypt from 'bcryptjs';
 
+export async function ensurePrimaryAdmin() {
+  try {
+    const adminEmail = (process.env.SEED_ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'sparshchauhan050@gmail.com').toLowerCase().trim();
+    const adminPassword = process.env.SEED_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'Sp@080806';
+    const passwordHash = await bcrypt.hash(adminPassword, 10);
+
+    // 1. Find if sparshchauhan050@gmail.com exists
+    const existing = await prisma.user.findFirst({
+      where: { email: { equals: adminEmail, mode: 'insensitive' } },
+    });
+
+    if (existing) {
+      await prisma.user.update({
+        where: { id: existing.id },
+        data: {
+          role: 'ADMIN',
+          passwordHash,
+          name: existing.name && existing.name !== 'System Admin' ? existing.name : 'Sparsh Chauhan',
+          isVerified: true,
+        },
+      });
+      console.log(`👑 Ensured ${adminEmail} is configured as sole ADMIN with updated credentials.`);
+    } else {
+      await prisma.user.create({
+        data: {
+          email: adminEmail,
+          name: 'Sparsh Chauhan',
+          passwordHash,
+          role: 'ADMIN',
+          isVerified: true,
+          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        },
+      });
+      console.log(`👑 Created primary ADMIN user: ${adminEmail}`);
+    }
+
+    // 2. Remove other admin users so sparshchauhan050@gmail.com is the sole admin
+    const otherAdmins = await prisma.user.findMany({
+      where: {
+        role: 'ADMIN',
+        email: { not: adminEmail, mode: 'insensitive' },
+      },
+    });
+
+    for (const other of otherAdmins) {
+      if (other.email.toLowerCase().includes('admin@hirehub')) {
+        await prisma.user.delete({ where: { id: other.id } }).catch(() => {});
+      } else {
+        await prisma.user.update({
+          where: { id: other.id },
+          data: { role: 'JOB_SEEKER' },
+        }).catch(() => {});
+      }
+    }
+  } catch (err: any) {
+    console.error('⚠️ Warning ensuring primary admin user:', err?.message || err);
+  }
+}
+
 export async function seedDatabaseIfEmpty() {
   try {
     // Under no circumstances should we auto-seed in production unless explicitly enabled

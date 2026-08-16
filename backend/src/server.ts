@@ -3,7 +3,7 @@ dotenv.config();
 
 import app from './app';
 import { prisma, warmupDatabaseConnection } from './config/db';
-import { seedDatabaseIfEmpty } from './utils/seedDb';
+import { seedDatabaseIfEmpty, ensurePrimaryAdmin } from './utils/seedDb';
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 const HOST = '0.0.0.0';
@@ -16,6 +16,7 @@ const server = app.listen(PORT, HOST, async () => {
     warmupDatabaseConnection().catch((err: any) => {
       console.warn(`⚠️ Database warmup notice: ${err?.message || err}`);
     });
+    await ensurePrimaryAdmin();
     await seedDatabaseIfEmpty();
   } catch (startupErr: any) {
     console.error('⚠️ Startup initialization warning:', startupErr?.message || startupErr);
