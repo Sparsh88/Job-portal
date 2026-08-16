@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   token: string | null;
-  login: (email: string, password: string) => Promise<User>;
+  login: (email: string, password: string, role?: string) => Promise<User>;
   register: (name: string | any, email?: string, password?: string, role?: string) => Promise<User>;
   logout: () => void;
   updateUserProfileState: (updatedUser: User) => void;
@@ -46,8 +46,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fetchCurrentUser();
   }, []);
 
-  const login = async (email: string, password: string): Promise<User> => {
-    const response = await api.post('/auth/login', { email, password });
+  const login = async (email: string, password: string, role?: string): Promise<User> => {
+    const response = await api.post('/auth/login', { email, password, role });
     const { user: userData, accessToken, refreshToken } = response.data.data;
     localStorage.setItem('hirehub_token', accessToken);
     localStorage.setItem('hirehub_refresh_token', refreshToken);

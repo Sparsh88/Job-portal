@@ -57,8 +57,8 @@ async function main() {
   await prisma.profile.deleteMany({});
   await prisma.user.deleteMany({});
 
-  const adminEmail = process.env.SEED_ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'admin@hirehub.ai';
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'Password123!';
+  const adminEmail = process.env.SEED_ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'sparshchauhan050@gmail.com';
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'Sp@080806';
   
   if (process.env.NODE_ENV === 'production' && adminPassword === 'Password123!') {
     console.warn('⚠️ WARNING: Seeding admin with default password "Password123!" in production is highly insecure. Please set SEED_ADMIN_PASSWORD in environment variables.');
@@ -70,7 +70,7 @@ async function main() {
   await prisma.user.create({
     data: {
       email: adminEmail,
-      name: 'System Admin',
+      name: 'Sparsh Chauhan',
       passwordHash,
       role: Role.ADMIN,
       isVerified: true,

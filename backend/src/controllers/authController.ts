@@ -91,7 +91,7 @@ export const register = asyncHandler(async (req: AuthenticatedRequest, res: Resp
 });
 
 export const login = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
   if (!email || !password) {
     throw new AppError('Please provide both email and password.', 400);
   }
@@ -106,6 +106,18 @@ export const login = asyncHandler(async (req: AuthenticatedRequest, res: Respons
 
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     throw new AppError('Invalid email or password credentials.', 401);
+  }
+
+  // Enforce portal role segregation: ensure account role matches portal being accessed
+  if (role && user.role !== role) {
+    const roleLabels: Record<string, string> = {
+      JOB_SEEKER: 'Candidate / Job Seeker',
+      RECRUITER: 'Recruiter',
+      ADMIN: 'Admin',
+    };
+    const targetLabel = roleLabels[role] || role;
+    const currentLabel = roleLabels[user.role] || user.role;
+    throw new AppError(`Access denied: This account has ${currentLabel} access and cannot log in via the ${targetLabel} portal. Please switch to the correct portal.`, 403);
   }
 
   const tokenPayload = { userId: user.id, email: user.email, role: user.role };

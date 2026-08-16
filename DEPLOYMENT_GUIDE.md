@@ -60,8 +60,8 @@ We have added a `render.yaml` file to the root of your project. Render will use 
    * `DATABASE_URL`: Paste the PostgreSQL connection string you copied from Neon in Step 1.
    * `FRONTEND_URL`: Put `*` for now (we will update this with your actual Vercel URL later).
    * `ENABLE_AUTO_SEEDING`: Set to `true` if you want to seed mock data on initial startup (default is `false` in production for safety).
-   * `SEED_ADMIN_EMAIL`: Set your custom admin email (defaults to `admin@hirehub.ai`).
-   * `SEED_ADMIN_PASSWORD`: Set a secure custom admin password (defaults to `Password123!`).
+   * `SEED_ADMIN_EMAIL`: Set your custom admin email (defaults to `sparshchauhan050@gmail.com`).
+   * `SEED_ADMIN_PASSWORD`: Set a secure custom admin password (defaults to `Sp@080806`).
    * Note: `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` will be **automatically generated** for you securely!
 7. Click **Apply**. Render will start building and deploying the backend.
 8. Once deployment is complete, Render will provide a service URL (e.g., `https://hirehub-ai-backend.onrender.com`). Copy this URL.

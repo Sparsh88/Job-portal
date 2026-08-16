@@ -29,8 +29,8 @@ export async function seedDatabaseIfEmpty() {
     await prisma.profile.deleteMany({});
     await prisma.user.deleteMany({});
 
-    const adminEmail = process.env.SEED_ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'admin@hirehub.ai';
-    const adminPassword = process.env.SEED_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'Password123!';
+    const adminEmail = process.env.SEED_ADMIN_EMAIL || process.env.ADMIN_EMAIL || 'sparshchauhan050@gmail.com';
+    const adminPassword = process.env.SEED_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'Sp@080806';
     
     // Safety check: print a warning if using default credentials in production
     if (process.env.NODE_ENV === 'production' && adminPassword === 'Password123!') {
@@ -43,7 +43,7 @@ export async function seedDatabaseIfEmpty() {
     await prisma.user.create({
       data: {
         email: adminEmail,
-        name: 'System Admin',
+        name: 'Sparsh Chauhan',
         passwordHash,
         role: 'ADMIN',
         isVerified: true,

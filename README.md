@@ -12,6 +12,21 @@ A full-stack hiring management platform featuring role-based workflows, automate
 
 ---
 
+## Demo Login Credentials
+
+For testing the different platform portals and features:
+
+| Role | Portal Tab | Email | Password | Access & Capabilities |
+|---|---|---|---|---|
+| **Recruiter (Primary)** | **Recruiter** | `recruiter@techcorp.com` | `Password123!` | Post & manage job postings, review candidate resumes, inspect AI match scores, and schedule candidate interviews. |
+| **Recruiter (Secondary)** | **Recruiter** | `hiring@innovatelabs.ai` | `Password123!` | Create & edit engineering listings, review applicants, and manage recruitment pipeline. |
+| **Candidate / Job Seeker** | **Candidate** | `alex.developer@gmail.com` | `Password123!` | Search & filter jobs, run AI resume match tests, track applications, and practice mock technical interviews. |
+| **Admin** | **Admin** | `sparshchauhan050@gmail.com` | `Sp@080806` | Full platform administrative governance, system metrics, user management, and moderation queue. |
+
+> **Role Isolation & Security:** The platform enforces strict role isolation across all login portals. Recruiter credentials cannot log in via Candidate or Admin tabs; Candidate accounts cannot access Recruiter or Admin dashboards; and Admin accounts are restricted exclusively to the Admin Command Center.
+
+---
+
 ## Overview
 
 HireHub AI is a production-oriented web application designed to bridge the gap between candidates and hiring managers. It streamlines the recruitment lifecycle by providing tailored interfaces for job seekers, recruiters, and platform administrators.

@@ -19,12 +19,17 @@ export const Login: React.FC = () => {
     setErrorMessage('');
     setLoading(true);
     try {
-      const loggedUser = await login(email, password);
+      const loggedUser = await login(email, password, selectedRole);
+      if (loggedUser.role !== selectedRole) {
+        throw new Error(`Access denied: This account cannot log in through the ${selectedRole.replace('_', ' ')} portal.`);
+      }
       if (loggedUser.role === 'ADMIN') navigate('/admin/dashboard');
       else if (loggedUser.role === 'RECRUITER') navigate('/recruiter/dashboard');
       else navigate('/candidate/dashboard');
     } catch (error: any) {
-      setErrorMessage(error.response?.data?.message || 'Invalid email or password credentials.');
+      setErrorMessage(
+        error.response?.data?.message || error.message || 'Invalid email or password credentials.'
+      );
     } finally {
       setLoading(false);
     }
@@ -174,7 +179,7 @@ export const Login: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={
                   selectedRole === 'ADMIN'
-                    ? 'Enter admin email (e.g. admin@hirehub.ai)'
+                    ? 'Enter admin email (e.g. sparshchauhan050@gmail.com)'
                     : selectedRole === 'RECRUITER'
                     ? 'Enter recruiter corporate email...'
                     : 'Enter candidate email...'
