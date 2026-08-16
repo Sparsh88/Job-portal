@@ -103,21 +103,3 @@ export interface Interview {
   status: 'SCHEDULED' | 'COMPLETED' | 'CANCELLED';
   notes?: string;
 }
-
-export interface CategoryCourse {
-  id: string;
-  category: string;
-  categorySlug: string;
-  title: string;
-  provider: string;
-  rating: number;
-  reviewsCount: string;
-  duration: string;
-  level: 'Beginner' | 'Intermediate' | 'Advanced' | 'All Levels';
-  skills: string[];
-  description: string;
-  certificate: boolean;
-  link: string;
-  badgeColor: string;
-  iconName: string;
-}

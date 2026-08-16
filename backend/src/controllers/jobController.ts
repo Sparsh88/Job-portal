@@ -68,7 +68,37 @@ export const getAllJobs = asyncHandler(async (req: AuthenticatedRequest, res: Re
   }
 
   if (category) {
-    whereClause.category = { equals: category as string, mode: 'insensitive' };
+    const catStr = (category as string).toLowerCase().trim();
+    if (catStr.includes('cyber') || catStr.includes('hack') || catStr.includes('security')) {
+      whereClause.OR = [
+        { category: { contains: 'Cyber', mode: 'insensitive' } },
+        { category: { contains: 'Security', mode: 'insensitive' } },
+        { category: { contains: 'Hacking', mode: 'insensitive' } },
+      ];
+    } else if (catStr.includes('ai') || catStr.includes('machine') || catStr.includes('intelligence')) {
+      whereClause.OR = [
+        { category: { contains: 'Artificial', mode: 'insensitive' } },
+        { category: { contains: 'AI', mode: 'insensitive' } },
+        { category: { contains: 'Machine Learning', mode: 'insensitive' } },
+      ];
+    } else if (catStr.includes('cloud') || catStr.includes('devops')) {
+      whereClause.OR = [
+        { category: { contains: 'Cloud', mode: 'insensitive' } },
+        { category: { contains: 'DevOps', mode: 'insensitive' } },
+      ];
+    } else if (catStr.includes('data')) {
+      whereClause.OR = [
+        { category: { contains: 'Data', mode: 'insensitive' } },
+      ];
+    } else if (catStr.includes('full') || catStr.includes('stack') || catStr.includes('web')) {
+      whereClause.OR = [
+        { category: { contains: 'Full Stack', mode: 'insensitive' } },
+        { category: { contains: 'Web', mode: 'insensitive' } },
+        { category: { contains: 'Software', mode: 'insensitive' } },
+      ];
+    } else {
+      whereClause.category = { contains: category as string, mode: 'insensitive' };
+    }
   }
 
   if (location) {

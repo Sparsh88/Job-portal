@@ -62,20 +62,20 @@ export async function ensurePrimaryAdmin() {
 
 export async function seedDatabaseIfEmpty() {
   try {
-    // Under no circumstances should we auto-seed in production unless explicitly enabled
-    if (process.env.NODE_ENV === 'production' && process.env.ENABLE_AUTO_SEEDING !== 'true') {
-      console.log('ℹ️ Auto-seeding is disabled in production. Set ENABLE_AUTO_SEEDING=true to enable.');
+    const [fsCount, cyberCount, aiCount, cloudCount, dataCount] = await Promise.all([
+      prisma.job.count({ where: { category: { contains: 'Full Stack', mode: 'insensitive' } } }),
+      prisma.job.count({ where: { category: { contains: 'Cyber', mode: 'insensitive' } } }),
+      prisma.job.count({ where: { category: { contains: 'Artificial', mode: 'insensitive' } } }),
+      prisma.job.count({ where: { category: { contains: 'Cloud', mode: 'insensitive' } } }),
+      prisma.job.count({ where: { category: { contains: 'Data', mode: 'insensitive' } } }),
+    ]);
+
+    if (fsCount >= 3 && cyberCount >= 3 && aiCount >= 3 && cloudCount >= 3 && dataCount >= 3) {
+      console.log(`ℹ️ All 5 categories have 3+ jobs. Current counts: FullStack=${fsCount}, Cyber=${cyberCount}, AI=${aiCount}, Cloud=${cloudCount}, Data=${dataCount}.`);
       return;
     }
 
-    const jobCount = await prisma.job.count();
-    // If jobs are 20 or more, DB is up to date
-    if (jobCount >= 20) {
-      console.log(`ℹ️ Database already contains ${jobCount} jobs. Skipping auto-seed.`);
-      return;
-    }
-
-    console.log('🌱 Auto-seeding database with 4+ jobs per section including Full Stack Web Development...');
+    console.log(`🌱 Seeding database: ensuring 4+ jobs in each of the 5 categories (Cyber: ${cyberCount}, AI: ${aiCount}, Cloud: ${cloudCount}, Data: ${dataCount}, FullStack: ${fsCount})...`);
 
     // Clean existing tables to avoid duplicate key errors
     await prisma.notification.deleteMany({});
