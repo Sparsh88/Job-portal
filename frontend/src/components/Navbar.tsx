@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { Briefcase, Sparkles, LogOut, Menu, X, ShieldCheck, Zap, Bot, Sun, Moon } from 'lucide-react';
+import { Briefcase, Sparkles, LogOut, Menu, X, ShieldCheck, Zap, Bot, Sun, Moon, GraduationCap } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -37,12 +37,24 @@ export const Navbar: React.FC = () => {
             <Link
               to="/jobs"
               className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 ${
-                isActive('/jobs')
+                isActive('/jobs') && !location.search.includes('tab=courses')
                   ? 'bg-blue-600/15 text-blue-700 dark:text-blue-400 border border-blue-500/40 shadow-sm'
                   : 'text-slate-800 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-zinc-800/80'
               }`}
             >
               Browse Jobs
+            </Link>
+
+            <Link
+              to="/jobs?tab=courses"
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-1.5 ${
+                location.search.includes('tab=courses')
+                  ? 'bg-purple-600/15 text-purple-600 dark:text-purple-400 border border-purple-500/30 shadow-sm'
+                  : 'text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800/80'
+              }`}
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" />
+              Tech Courses
             </Link>
 
             <Link
@@ -209,6 +221,14 @@ export const Navbar: React.FC = () => {
             className="block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
           >
             Browse Jobs
+          </Link>
+          <Link
+            to="/jobs?tab=courses"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2.5 rounded-lg text-sm font-medium text-purple-600 dark:text-purple-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2"
+          >
+            <GraduationCap className="w-4 h-4 text-purple-500" />
+            Tech Courses (3 per Domain)
           </Link>
           <Link
             to="/ai-scorer"
