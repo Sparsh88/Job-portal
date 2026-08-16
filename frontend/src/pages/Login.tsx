@@ -179,10 +179,10 @@ export const Login: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={
                   selectedRole === 'ADMIN'
-                    ? 'Enter admin email (e.g. sparshchauhan050@gmail.com)'
+                    ? 'Enter admin email address...'
                     : selectedRole === 'RECRUITER'
                     ? 'Enter recruiter corporate email...'
-                    : 'Enter candidate email...'
+                    : 'Enter candidate email address...'
                 }
                 className={`w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900/90 border border-slate-300 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none ${theme.focusRing} transition-all duration-300`}
               />
