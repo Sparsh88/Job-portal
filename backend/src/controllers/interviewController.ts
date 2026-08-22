@@ -116,7 +116,7 @@ export const updateInterview = asyncHandler(async (req: AuthenticatedRequest, re
   });
 });
 
-export const getAIMockQuestions = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+export const getAIMockQuestions = asyncHandler(async (req: any, res: Response) => {
   const { category = 'Software Engineering' } = req.query;
   const questions = generateMockInterviewQuestions(category as string);
 
@@ -126,13 +126,13 @@ export const getAIMockQuestions = asyncHandler(async (req: AuthenticatedRequest,
   });
 });
 
-export const evaluateAIMockResponse = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-  const { answer } = req.body;
-  if (!answer) {
+export const evaluateAIMockResponse = asyncHandler(async (req: any, res: Response) => {
+  const { question, answer, category } = req.body;
+  if (!answer || !answer.trim()) {
     throw new AppError('Answer text is required for AI evaluation.', 400);
   }
 
-  const evaluation = evaluateInterviewResponse(answer);
+  const evaluation = evaluateInterviewResponse(question || '', answer, category);
 
   res.status(200).json({
     success: true,

@@ -4,6 +4,7 @@ import { AuthenticatedRequest } from '../types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../utils/AppError';
 import { uploadToCloudinary } from '../services/cloudinaryService';
+import { analyzeResumeAndJob } from '../services/aiService';
 
 export const getProfile = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user?.userId;
@@ -183,5 +184,19 @@ export const getSavedJobs = asyncHandler(async (req: AuthenticatedRequest, res: 
   res.status(200).json({
     success: true,
     data: saved.map((s: any) => s.job),
+  });
+});
+
+export const aiScoreTest = asyncHandler(async (req: any, res: Response) => {
+  const { jobDescription, resumeText } = req.body;
+  if (!jobDescription || !resumeText) {
+    throw new AppError('Job description and resume text are required.', 400);
+  }
+
+  const analysis = analyzeResumeAndJob(jobDescription, resumeText);
+
+  res.status(200).json({
+    success: true,
+    data: analysis,
   });
 });
